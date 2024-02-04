@@ -1,0 +1,63 @@
+#ssh alias for zsh
+alias ssh='TERM=xterm-256color ssh'
+# ls directory highlighting
+export CLICOLOR=1
+export LSCOLORS=ExGxBxDxCxEgEdxbxgxcxd
+alias ll="ls -alG"
+
+# Git branch highlighting
+autoload -Uz compinit && compinit
+autoload -Uz add-zsh-hook
+autoload -Uz vcs_info
+
+add-zsh-hook precmd vcs_info
+
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' formats " %F{cyan}%c%u(%b)%f"
+zstyle ':vcs_info:*' actionformats " %F{cyan}%c%u(%b)%f %a"
+zstyle ':vcs_info:*' stagedstr "%F{green}"
+zstyle ':vcs_info:*' unstagedstr "%F{red}"
+zstyle ':vcs_info:*' check-for-changes true
+
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
+
++vi-git-untracked() {
+  if git --no-optional-locks status --porcelain 2> /dev/null | grep -q "^??"; then
+    hook_com[staged]+="%F{red}"
+  fi
+}
+
+setopt PROMPT_SUBST
+export PROMPT='%n:%1~$vcs_info_msg_0_ %# '
+
+
+export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+#Poetry
+export PATH="/Users/encord/.local/bin:$PATH"
+#Poetry tab completion
+fpath+=~/.zfunc
+autoload -Uz compinit && compinit
+
+# Encord SSH key
+export ENCORD_SSH_KEY=/Users/encord/Documents/jims-public-key-private-key.txt
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/encord/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/encord/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/encord/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/encord/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
